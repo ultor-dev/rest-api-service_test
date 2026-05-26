@@ -1,0 +1,20 @@
+{
+  "name": "rest-api-service",
+  "version": "1.0.0",
+  "description": "REST API сервис с авторизацией и лимитированием запросов",
+  "main": "API_app.js",
+  "scripts": {
+    "start": "node API_app.js",
+    "dev": "nodemon API_app.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
