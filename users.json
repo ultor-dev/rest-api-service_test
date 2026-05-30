@@ -38,5 +38,13 @@
     "createdBy": "admin",
     "createdAt": "2026-05-26T17:17:50.835Z",
     "id": 6
+  },
+  {
+    "name": "Иван ",
+    "age": 12,
+    "email": "dun@com",
+    "createdBy": "admin",
+    "createdAt": "2026-05-27T08:50:21.996Z",
+    "id": 7
   }
 ]

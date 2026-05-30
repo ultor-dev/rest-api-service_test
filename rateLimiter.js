@@ -11,17 +11,17 @@ const LIMITS = {
     // Максимум запросов в минуту для обычных пользователей
     user: {
         maxRequests: 30,
-        windowMs: 60 * 1000 // 1 минута
+        windowMs: 60 * 10000 // 1 минута
     },
     // Максимум запросов в минуту для администраторов
     admin: {
         maxRequests: 100,
-        windowMs: 60 * 1000 // 1 минута
+        windowMs: 60 * 10000 // 1 минута
     },
     // Максимум запросов в минуту для неавторизованных
     anonymous: {
         maxRequests: 10,
-        windowMs: 60 * 1000 // 1 минута
+        windowMs: 60 * 10000 // 1 минута
     }
 };
 
@@ -43,7 +43,7 @@ function cleanup() {
 }
 
 // Запускаем очистку каждые 5 минут
-setInterval(cleanup, 5 * 60 * 1000);
+setInterval(cleanup, 5 * 60 * 10000);
 
 /**
  * Middleware для ограничения запросов
