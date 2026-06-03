@@ -1,9 +1,7 @@
-// ============================================================
 //  server.js  —  REST Web API на Node.js
 //  Функции: регистрация, логин, CRUD пользователей,
 //           поиск, пагинация, статистика
 //  Безопасность: JWT, bcrypt, rate-limiting
-// ============================================================
 
 var express    = require("express");
 var bodyParser = require("body-parser");
@@ -17,13 +15,12 @@ var path       = require("path");
 var app = express();
 var JWT_SECRET = "super_secret_key_change_in_production_2024";
 
-// ── Middleware ──────────────────────────────────────────────
+// ── Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// ── Rate Limiting ───────────────────────────────────────────
-// Глобальный лимит: 100 запросов / 15 минут с одного IP
+// ── Rate Limiting
 var globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -42,7 +39,7 @@ var authLimiter = rateLimit({
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 
-// ── Helpers: чтение/запись JSON-файлов ──────────────────────
+// ── Helpers: чтение/запись JSON-файлов
 function readJSON(filename) {
     var filePath = path.join(__dirname, "data", filename);
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -52,7 +49,7 @@ function writeJSON(filename, data) {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
-// ── Middleware: проверка JWT токена ─────────────────────────
+// ── Middleware: проверка JWT токена
 function authenticate(req, res, next) {
     var authHeader = req.headers["authorization"];
     if (!authHeader) return res.status(401).json({ error: "Токен не передан" });
@@ -73,9 +70,8 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-// ══════════════════════════════════════════════════════════════
+
 //  1. POST /api/auth/register  —  Регистрация нового аккаунта
-// ══════════════════════════════════════════════════════════════
 app.post("/api/auth/register", function(req, res) {
     if (!req.body || !req.body.username || !req.body.password)
         return res.status(400).json({ error: "Укажите username и password" });
@@ -98,9 +94,7 @@ app.post("/api/auth/register", function(req, res) {
     res.status(201).json({ message: "Аккаунт создан", username: newAccount.username });
 });
 
-// ══════════════════════════════════════════════════════════════
 //  2. POST /api/auth/login  —  Авторизация, выдача JWT
-// ══════════════════════════════════════════════════════════════
 app.post("/api/auth/login", function(req, res) {
     if (!req.body || !req.body.username || !req.body.password)
         return res.status(400).json({ error: "Укажите username и password" });
@@ -118,9 +112,7 @@ app.post("/api/auth/login", function(req, res) {
     res.json({ token: token, role: account.role, username: account.username, expiresIn: "2h" });
 });
 
-// ══════════════════════════════════════════════════════════════
 //  3. GET /api/users  —  Список пользователей (пагинация + поиск)
-// ══════════════════════════════════════════════════════════════
 app.get("/api/users", authenticate, function(req, res) {
     var users = readJSON("users.json");
 
@@ -155,9 +147,7 @@ app.get("/api/users", authenticate, function(req, res) {
     });
 });
 
-// ══════════════════════════════════════════════════════════════
 //  4. GET /api/users/:id  —  Один пользователь по ID
-// ══════════════════════════════════════════════════════════════
 app.get("/api/users/:id", authenticate, function(req, res) {
     var users = readJSON("users.json");
     var user  = users.find(u => u.id == req.params.id);
@@ -165,9 +155,7 @@ app.get("/api/users/:id", authenticate, function(req, res) {
     res.json(user);
 });
 
-// ══════════════════════════════════════════════════════════════
 //  5. POST /api/users  —  Создать пользователя (admin only)
-// ══════════════════════════════════════════════════════════════
 app.post("/api/users", authenticate, requireAdmin, function(req, res) {
     if (!req.body || !req.body.name || !req.body.age || !req.body.email)
         return res.status(400).json({ error: "Укажите name, age и email" });
@@ -190,9 +178,7 @@ app.post("/api/users", authenticate, requireAdmin, function(req, res) {
     res.status(201).json(user);
 });
 
-// ══════════════════════════════════════════════════════════════
 //  6. PUT /api/users/:id  —  Обновить пользователя
-// ══════════════════════════════════════════════════════════════
 app.put("/api/users/:id", authenticate, function(req, res) {
     if (!req.body) return res.status(400).json({ error: "Тело запроса пустое" });
 
@@ -214,9 +200,7 @@ app.put("/api/users/:id", authenticate, function(req, res) {
     res.json(users[idx]);
 });
 
-// ══════════════════════════════════════════════════════════════
 //  7. DELETE /api/users/:id  —  Удалить пользователя (admin)
-// ══════════════════════════════════════════════════════════════
 app.delete("/api/users/:id", authenticate, requireAdmin, function(req, res) {
     var users = readJSON("users.json");
     var idx   = users.findIndex(u => u.id == req.params.id);
@@ -227,9 +211,7 @@ app.delete("/api/users/:id", authenticate, requireAdmin, function(req, res) {
     res.json({ message: "Пользователь удалён", user: removed });
 });
 
-// ══════════════════════════════════════════════════════════════
 //  8. GET /api/users/stats/summary  —  Статистика по пользователям
-// ══════════════════════════════════════════════════════════════
 app.get("/api/stats/summary", authenticate, function(req, res) {
     var users = readJSON("users.json");
     var totalAge = users.reduce((s, u) => s + u.age, 0);
@@ -253,9 +235,7 @@ app.get("/api/stats/summary", authenticate, function(req, res) {
     });
 });
 
-// ══════════════════════════════════════════════════════════════
 //  9. GET /api/profile  —  Профиль текущего авторизованного
-// ══════════════════════════════════════════════════════════════
 app.get("/api/profile", authenticate, function(req, res) {
     res.json({
         id: req.user.id,
