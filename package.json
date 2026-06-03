@@ -1,20 +1,17 @@
 {
-  "name": "rest-api-service",
+  "name": "rest-user-api",
   "version": "1.0.0",
-  "description": "REST API сервис с авторизацией и лимитированием запросов",
-  "main": "API_app.js",
+  "description": "REST Web API с JWT авторизацией и rate limiting",
+  "main": "server.js",
   "scripts": {
-    "start": "node API_app.js",
-    "dev": "nodemon API_app.js"
+    "start": "node server.js"
   },
   "dependencies": {
+    "express": "^4.18.0",
+    "body-parser": "^1.20.0",
+    "jsonwebtoken": "^9.0.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
-    "express": "^4.22.2",
-    "jsonwebtoken": "^9.0.2",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.0.0"
   }
 }
